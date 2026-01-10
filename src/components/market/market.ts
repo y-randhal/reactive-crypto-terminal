@@ -1,19 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BinanceStream } from '../../services/binance-stream';
-import { JsonPipe } from '@angular/common';
+import { Subscription, sampleTime } from 'rxjs';
+import { CryptoTicker } from '../../models/binance.model';
+import { CryptoPairPipe } from '../../pipes/cryptoPair';
+import { ChartComponent } from '../chart/chart';
+
 @Component({
   selector: 'market',
-  imports: [JsonPipe],
+  imports: [CryptoPairPipe, ChartComponent],
   templateUrl: './market.html',
   styleUrl: './market.scss',
   standalone: true
 })
-export class MarketComponent implements OnInit {
-  constructor(
-    private binanceStream: BinanceStream
-  ) {}
-cryptoData:any
+export class MarketComponent implements OnInit, OnDestroy {
+  private subscription!: Subscription;
+  cryptoData?: CryptoTicker;
+
+  constructor(private binanceStream: BinanceStream) {}
+
   ngOnInit() {
-    this.binanceStream.ticker$.subscribe(data => this.cryptoData = data);
+    console.log('Market component initialized');
+    this.subscription = this.binanceStream.ticker$
+      .pipe(sampleTime(100))
+      .subscribe((data: CryptoTicker) => {
+        console.log('Received ticker data:', data);
+        this.cryptoData = data;
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

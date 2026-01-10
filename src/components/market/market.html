@@ -1,1 +1,6 @@
-<h3>{{cryptoData | json}}</h3>
+@if (cryptoData){
+  <div class="market-container">
+    <h2>{{ cryptoData.symbol | cryptoPair }} Live Price: {{ cryptoData.lastPrice || 'Loading...' }}</h2>
+    <app-chart [cryptoData]="cryptoData"></app-chart>
+  </div>
+}
