@@ -3,16 +3,18 @@ import { BinanceStream } from '../../services/binance-stream';
 import { Subscription, sampleTime } from 'rxjs';
 import { CryptoTicker } from '../../models/binance.model';
 import { CryptoPairPipe } from '../../pipes/cryptoPair';
-import { ChartComponent } from '../chart/chart';
+import { Chart } from '../chart/chart';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+
 
 @Component({
   selector: 'market',
-  imports: [CryptoPairPipe, ChartComponent],
+  imports: [MatProgressSpinnerModule, CryptoPairPipe, Chart],
   templateUrl: './market.html',
   styleUrl: './market.scss',
   standalone: true
 })
-export class MarketComponent implements OnInit, OnDestroy {
+export class Market implements OnInit, OnDestroy {
   private subscription!: Subscription;
   cryptoData?: CryptoTicker;
 

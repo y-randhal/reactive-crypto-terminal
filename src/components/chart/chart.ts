@@ -3,12 +3,12 @@ import { createChart, IChartApi, CandlestickData, Time, CandlestickSeries } from
 import { CryptoTicker } from '../../models/binance.model';
 
 @Component({
-  selector: 'app-chart',
+  selector: 'chart',
   templateUrl: './chart.html',
   styleUrl: './chart.scss',
   standalone: true
 })
-export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
+export class Chart implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
   @Input() cryptoData?: CryptoTicker;
 

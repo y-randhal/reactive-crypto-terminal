@@ -12,7 +12,7 @@ import { TICKER_MAPPINGS } from '../../models/ticker-mappings';
   standalone: true
 })
 export class SearchBar {
-  tickerInput: string = 'btcusdt';
+  tickerInput: string = '';
   errorMessage: string = '';
 
   constructor(private binanceStream: BinanceStream) {}
