@@ -3,7 +3,8 @@
 
   h2 {
     margin-bottom: 20px;
-    color: #d1d4dc;
+    color: var(--mat-sys-on-surface);
+    transition: color 0.3s ease;
   }
 }
 

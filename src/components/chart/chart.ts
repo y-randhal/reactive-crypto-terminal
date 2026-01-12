@@ -16,9 +16,15 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
   private candlestickSeries: any;
   private currentCandle: CandlestickData | null = null;
   private candleInterval = 60000;
+  private themeObserver?: MutationObserver;
 
   ngOnInit() {
     console.log('Chart component initialized');
+    // Listen for theme changes
+    this.themeObserver = new MutationObserver(() => {
+      this.reinitializeChart();
+    });
+    this.themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
   ngAfterViewInit() {
@@ -33,12 +39,25 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
       this.chart.remove();
     }
     window.removeEventListener('resize', this.handleResize);
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+    }
   }
 
   ngOnChanges() {
     if (this.candlestickSeries && this.cryptoData) {
       this.updateChart(this.cryptoData);
     }
+  }
+
+  private reinitializeChart() {
+    if (this.chart) {
+      this.chart.remove();
+      this.chart = undefined as any;
+    }
+    setTimeout(() => {
+      this.initChart();
+    }, 0);
   }
 
   private initChart() {
@@ -52,16 +71,21 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
     const containerWidth = this.chartContainer.nativeElement.clientWidth;
     const width = containerWidth > 0 ? containerWidth : 600;
 
+    const isDarkMode = document.body.classList.contains('dark-theme');
+    const backgroundColor = isDarkMode ? '#1e1e1e' : '#ffffff';
+    const textColor = isDarkMode ? '#d1d4dc' : '#191919';
+    const gridColor = isDarkMode ? '#2b2b43' : '#e0e0e0';
+
     this.chart = createChart(this.chartContainer.nativeElement, {
       width: width,
       height: 400,
       layout: {
-        background: { color: '#1e1e1e' },
-        textColor: '#d1d4dc',
+        background: { color: backgroundColor },
+        textColor: textColor,
       },
       grid: {
-        vertLines: { color: '#2b2b43' },
-        horzLines: { color: '#2b2b43' },
+        vertLines: { color: gridColor },
+        horzLines: { color: gridColor },
       },
       timeScale: {
         timeVisible: true,
