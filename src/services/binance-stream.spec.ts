@@ -30,4 +30,12 @@ describe('BinanceStream', () => {
   it('should expose ticker$ observable', () => {
     expect(service.ticker$).toBeDefined();
   });
+
+  it('should expose connectionStatus signal', () => {
+    expect(service.connectionStatus()).toBe('connecting');
+  });
+
+  it('should expose errorMessage signal', () => {
+    expect(service.errorMessage()).toBeNull();
+  });
 });

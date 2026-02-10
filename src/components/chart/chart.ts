@@ -2,12 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
-  AfterViewInit,
-  OnChanges,
-  SimpleChanges,
   ElementRef,
   ViewChild,
-  Input,
+  input,
   inject,
   afterNextRender,
   effect,
@@ -23,9 +20,9 @@ import { ThemeService } from '../../services/theme.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Chart implements OnChanges, AfterViewInit, OnDestroy {
+export class Chart implements OnDestroy {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
-  @Input() cryptoData?: CryptoTicker;
+  cryptoData = input<CryptoTicker>();
 
   private chart!: IChartApi;
   private candlestickSeries: { update: (data: CandlestickData) => void } | null = null;
@@ -40,15 +37,14 @@ export class Chart implements OnChanges, AfterViewInit, OnDestroy {
     }
   });
 
-  ngAfterViewInit() {
-    afterNextRender(() => this.initChart());
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['cryptoData'] && this.candlestickSeries && this.cryptoData) {
-      this.updateChart(this.cryptoData);
+  private cryptoDataEffect = effect(() => {
+    const data = this.cryptoData();
+    if (this.candlestickSeries && data) {
+      this.updateChart(data);
     }
-  }
+  });
+
+  private scheduleChartInit = afterNextRender(() => this.initChart());
 
   ngOnDestroy() {
     if (this.chart) {
@@ -104,6 +100,11 @@ export class Chart implements OnChanges, AfterViewInit, OnDestroy {
     });
 
     window.addEventListener('resize', this.handleResize);
+
+    const initialData = this.cryptoData();
+    if (initialData) {
+      this.updateChart(initialData);
+    }
   }
 
   private handleResize = () => {
@@ -123,7 +124,7 @@ export class Chart implements OnChanges, AfterViewInit, OnDestroy {
 
     if (!this.currentCandle || this.currentCandle.time !== time) {
       if (this.currentCandle) {
-        this.candlestickSeries.update(this.currentCandle);
+        this.candlestickSeries.update({ ...this.currentCandle });
       }
       this.currentCandle = {
         time,
@@ -133,11 +134,14 @@ export class Chart implements OnChanges, AfterViewInit, OnDestroy {
         close: price,
       };
     } else {
-      this.currentCandle.high = Math.max(this.currentCandle.high, price);
-      this.currentCandle.low = Math.min(this.currentCandle.low, price);
-      this.currentCandle.close = price;
+      this.currentCandle = {
+        ...this.currentCandle,
+        high: Math.max(this.currentCandle.high, price),
+        low: Math.min(this.currentCandle.low, price),
+        close: price,
+      };
     }
 
-    this.candlestickSeries.update(this.currentCandle);
+    this.candlestickSeries.update({ ...this.currentCandle });
   }
 }
