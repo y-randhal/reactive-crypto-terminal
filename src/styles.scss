@@ -40,7 +40,9 @@ $dark-theme: mat.define-theme((
   @include mat.all-component-themes($light-theme);
   @include mat.system-level-colors($light-theme);
   @include mat.system-level-typography($light-theme);
+  @include mat.form-field-overrides((outlined-container-shape: 28px));
 }
+
 
 // Apply dark theme when dark-theme class is present
 body.dark-theme {

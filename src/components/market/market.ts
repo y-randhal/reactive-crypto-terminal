@@ -7,10 +7,19 @@ import { CryptoPairPipe } from '../../pipes/cryptoPair';
 import { Chart } from '../chart/chart';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-market',
-  imports: [MatProgressSpinnerModule, MatIconModule, CryptoPairPipe, Chart],
+  imports: [
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatCardModule,
+    DecimalPipe,
+    CryptoPairPipe,
+    Chart,
+  ],
   templateUrl: './market.html',
   styleUrl: './market.scss',
   standalone: true,

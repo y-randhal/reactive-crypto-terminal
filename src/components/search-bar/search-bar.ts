@@ -1,16 +1,30 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
 import { BinanceStream } from '../../services/binance-stream';
 import { TICKER_MAPPINGS } from '../../models/ticker-mappings';
 
+const QUICK_PAIRS = [
+  { label: 'BTC', ticker: 'btcusdt' },
+  { label: 'ETH', ticker: 'ethusdt' },
+  { label: 'SOL', ticker: 'solusdt' },
+  { label: 'BNB', ticker: 'bnbusdt' },
+  { label: 'XRP', ticker: 'xrpusdt' },
+  { label: 'DOGE', ticker: 'dogeusdt' },
+  { label: 'ADA', ticker: 'adausdt' },
+  { label: 'LTC', ticker: 'ltcusdt' },
+];
+
 @Component({
   selector: 'app-search-bar',
-  imports: [ReactiveFormsModule, CommonModule, MatInputModule, MatButtonModule, MatIconModule, MatFormFieldModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    MatIconModule,
+    MatChipsModule,
+  ],
   templateUrl: './search-bar.html',
   styleUrl: './search-bar.scss',
   standalone: true,
@@ -19,8 +33,19 @@ import { TICKER_MAPPINGS } from '../../models/ticker-mappings';
 export class SearchBar {
   private binanceStream = inject(BinanceStream);
 
+  protected readonly quickPairs = QUICK_PAIRS;
   tickerControl = new FormControl<string>('', { nonNullable: true });
   errorMessage = '';
+
+  selectPair(ticker: string): void {
+    this.binanceStream.setTicker(ticker);
+    this.tickerControl.setValue('');
+    this.errorMessage = '';
+  }
+
+  isSelected(ticker: string): boolean {
+    return this.binanceStream.currentTicker() === ticker;
+  }
 
   onSearch() {
     const input = this.tickerControl.value.trim().toLowerCase();

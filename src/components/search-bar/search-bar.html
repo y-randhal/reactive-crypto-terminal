@@ -1,19 +1,32 @@
 <div class="search-bar-container">
-  <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Search Cryptocurrency</mat-label>
+  <div class="search-field-pill" [class.has-error]="errorMessage">
+    <mat-icon class="search-icon">search</mat-icon>
     <input
-      matInput
+      type="text"
       [formControl]="tickerControl"
       (keydown.enter)="onSearch()"
-      placeholder="Enter ticker (e.g., BTC, Bitcoin, BTCUSDT, ETH, Ethereum)"
+      placeholder="Search Cryptocurrency (e.g., BTC, ETH, SOL)"
       autocomplete="off"
+      class="search-input"
     />
-    <mat-icon matPrefix>search</mat-icon>
-    <button matSuffix mat-icon-button (click)="onSearch()">
+    <button type="button" class="search-button" (click)="onSearch()" aria-label="Search">
       <mat-icon>arrow_forward</mat-icon>
     </button>
-    @if (errorMessage) {
-      <mat-error class="search-error">{{ errorMessage }}</mat-error>
-    }
-  </mat-form-field>
+  </div>
+  @if (errorMessage) {
+    <span class="search-error">{{ errorMessage }}</span>
+  }
+  <div class="quick-pairs">
+    <span class="quick-pairs-label">Quick select:</span>
+    <mat-chip-set aria-label="Popular pairs">
+      @for (pair of quickPairs; track pair.ticker) {
+        <mat-chip-option
+          [selected]="isSelected(pair.ticker)"
+          (click)="selectPair(pair.ticker)"
+        >
+          {{ pair.label }}
+        </mat-chip-option>
+      }
+    </mat-chip-set>
+  </div>
 </div>

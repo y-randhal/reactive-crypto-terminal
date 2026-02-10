@@ -16,6 +16,7 @@ export class BinanceStream {
 
   readonly connectionStatus = computed(() => this.connectionStatusSignal());
   readonly errorMessage = computed(() => this.errorMessageSignal());
+  readonly currentTicker = signal<string>('btcusdt');
 
   readonly ticker$: Observable<CryptoTicker>;
   private readonly tickerSubject = new BehaviorSubject<string>('btcusdt');
@@ -76,7 +77,9 @@ export class BinanceStream {
   }
 
   setTicker(ticker: string): void {
-    this.tickerSubject.next(ticker.toLowerCase());
+    const normalized = ticker.toLowerCase();
+    this.currentTicker.set(normalized);
+    this.tickerSubject.next(normalized);
   }
 
   getCurrentTicker(): string {
