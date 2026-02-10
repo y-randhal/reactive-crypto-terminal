@@ -1,0 +1,46 @@
+<div class="search-bar-container" role="search">
+  <div
+    class="search-field-pill"
+    [class.has-error]="errorMessage"
+    [attr.aria-invalid]="errorMessage ? 'true' : null"
+    [attr.aria-describedby]="errorMessage ? 'search-error' : null"
+  >
+    <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+    <input
+      type="search"
+      [formControl]="tickerControl"
+      (keydown.enter)="onSearch()"
+      placeholder="Search Cryptocurrency (e.g., BTC, ETH, SOL)"
+      autocomplete="off"
+      class="search-input"
+      aria-label="Search cryptocurrency by ticker symbol"
+      [attr.aria-invalid]="errorMessage ? 'true' : null"
+    />
+    <button
+      type="button"
+      class="search-button"
+      (click)="onSearch()"
+      aria-label="Search"
+    >
+      <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+    </button>
+  </div>
+  @if (errorMessage) {
+    <span id="search-error" class="search-error" role="alert">{{
+      errorMessage
+    }}</span>
+  }
+  <div class="quick-pairs" role="group" aria-labelledby="quick-pairs-label">
+    <span id="quick-pairs-label" class="quick-pairs-label">Quick select:</span>
+    <mat-chip-set aria-label="Popular pairs">
+      @for (pair of quickPairs; track pair.ticker) {
+        <mat-chip-option
+          [selected]="isSelected(pair.ticker)"
+          (click)="selectPair(pair.ticker)"
+        >
+          {{ pair.label }}
+        </mat-chip-option>
+      }
+    </mat-chip-set>
+  </div>
+</div>

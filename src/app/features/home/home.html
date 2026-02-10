@@ -1,0 +1,63 @@
+<div class="home-container">
+  <div class="hero-section">
+    <h1 class="hero-title">Welcome !</h1>
+    <p class="hero-subtitle">
+      Real-time cryptocurrency market data powered by RxJS and Angular
+    </p>
+    <div class="hero-actions">
+      <button mat-raised-button color="primary" routerLink="/dashboard">
+        <mat-icon aria-hidden="true">dashboard</mat-icon>
+        View Dashboard
+      </button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <h2 class="section-title">Features</h2>
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <mat-card class="feature-card">
+          <mat-card-header>
+            <mat-icon class="feature-icon" aria-hidden="true">{{
+              feature.icon
+            }}</mat-icon>
+          </mat-card-header>
+          <mat-card-content>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </div>
+
+  <div class="tech-section">
+    <h2 class="section-title">Built With</h2>
+    <div class="tech-stack">
+      <mat-card class="tech-card">
+        <mat-card-content>
+          <mat-icon aria-hidden="true">code</mat-icon>
+          <h4>Angular 19</h4>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="tech-card">
+        <mat-card-content>
+          <mat-icon aria-hidden="true">sync</mat-icon>
+          <h4>RxJS</h4>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="tech-card">
+        <mat-card-content>
+          <mat-icon aria-hidden="true">palette</mat-icon>
+          <h4>Material Design</h4>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="tech-card">
+        <mat-card-content>
+          <mat-icon aria-hidden="true">show_chart</mat-icon>
+          <h4>Lightweight Charts</h4>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

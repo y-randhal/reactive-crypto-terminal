@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { Navbar } from '../components/navbar/navbar';
+import { Navbar } from '@shared/layout/navbar/navbar';
 
 @Component({
   selector: 'app-root',
   imports: [Navbar],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
   protected readonly title = signal('reactive-crypto-terminal');

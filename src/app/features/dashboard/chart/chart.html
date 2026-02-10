@@ -1,0 +1,10 @@
+<div
+  #chartContainer
+  class="chart-container"
+  role="img"
+  [attr.aria-label]="
+    'Price chart for ' +
+    ((cryptoData()?.symbol ?? '' | cryptoPair) || 'loading') +
+    ', candlestick view'
+  "
+></div>

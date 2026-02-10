@@ -1,0 +1,97 @@
+@if (cryptoData(); as data) {
+  <section
+    class="market-container"
+    aria-labelledby="market-pair-label"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <mat-card class="price-card" appearance="outlined">
+      <mat-card-content>
+        <div class="price-header">
+          <div class="price-main">
+            <span id="market-pair-label" class="symbol">{{
+              data.symbol | cryptoPair
+            }}</span>
+            <span class="price">{{ data.lastPrice | number: "1.2-8" }}</span>
+            <span
+              class="change"
+              [class.positive]="data.priceChangePercent >= 0"
+              [class.negative]="data.priceChangePercent < 0"
+            >
+              {{ data.priceChangePercent >= 0 ? "+" : ""
+              }}{{ data.priceChangePercent | number: "1.2-2" }}%
+            </span>
+          </div>
+          @switch (binanceStream.connectionStatus()) {
+            @case ("connecting") {
+              <span class="status status-connecting" aria-live="polite">
+                <mat-spinner diameter="20"></mat-spinner>
+                Connecting...
+              </span>
+            }
+            @case ("connected") {
+              <span class="status status-connected" aria-live="polite">
+                <mat-icon aria-hidden="true">check_circle</mat-icon>
+                Live
+              </span>
+            }
+            @case ("error") {
+              <span class="status status-error" aria-live="assertive">
+                <mat-icon aria-hidden="true">error</mat-icon>
+                {{ binanceStream.errorMessage() || "Connection error" }}
+              </span>
+            }
+            @default {}
+          }
+        </div>
+        <div
+          class="stats-strip"
+          role="list"
+          aria-label="24-hour market statistics"
+        >
+          <div class="stat" role="listitem">
+            <span class="stat-label">24h High</span>
+            <span class="stat-value">{{
+              data.highPrice | number: "1.2-8"
+            }}</span>
+          </div>
+          <div class="stat" role="listitem">
+            <span class="stat-label">24h Low</span>
+            <span class="stat-value">{{
+              data.lowPrice | number: "1.2-8"
+            }}</span>
+          </div>
+          <div class="stat" role="listitem">
+            <span class="stat-label">24h Volume</span>
+            <span class="stat-value"
+              >{{ data.volumeBase | number: "1.2-4" }}
+              {{ data.symbol.replace("USDT", "") }}</span
+            >
+          </div>
+          <div class="stat" role="listitem">
+            <span class="stat-label">Trades</span>
+            <span class="stat-value">{{ data.totalTrades | number }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="chart-card" appearance="outlined">
+      <mat-card-content>
+        @defer (on viewport) {
+          <app-chart [cryptoData]="data"></app-chart>
+        } @placeholder {
+          <div class="chart-placeholder">Loading chart...</div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+} @else {
+  <mat-card class="loading-card" appearance="outlined">
+    <mat-card-content>
+      <div class="loading-spinner">
+        <mat-spinner></mat-spinner>
+        <span>Connecting to market data...</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+}

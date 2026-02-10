@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { Home } from './pages/home/home';
+import { Home } from '@features/home/home';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -7,6 +7,6 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+      import('@features/dashboard/dashboard').then((m) => m.Dashboard),
   },
 ];
