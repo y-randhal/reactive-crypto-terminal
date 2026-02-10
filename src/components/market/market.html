@@ -1,11 +1,10 @@
-@if (cryptoData){
+@if (cryptoData(); as data) {
   <div class="market-container">
-    <h2>{{ cryptoData.symbol | cryptoPair }} Live Price: {{ cryptoData.lastPrice || 'Loading...' }}</h2>
-    <chart [cryptoData]="cryptoData"></chart>
+    <h2>{{ data.symbol | cryptoPair }} Live Price: {{ data.lastPrice || 'Loading...' }}</h2>
+    <chart [cryptoData]="data"></chart>
   </div>
-}
-@else{
-  <div class=loading-spinner>
+} @else {
+  <div class="loading-spinner">
     <mat-spinner></mat-spinner>
   </div>
 }

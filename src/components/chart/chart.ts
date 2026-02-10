@@ -1,4 +1,15 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges,
+  ElementRef,
+  ViewChild,
+  Input,
+  afterNextRender,
+} from '@angular/core';
 import { createChart, IChartApi, CandlestickData, Time, CandlestickSeries } from 'lightweight-charts';
 import { CryptoTicker } from '../../models/binance.model';
 
@@ -8,19 +19,17 @@ import { CryptoTicker } from '../../models/binance.model';
   styleUrl: './chart.scss',
   standalone: true
 })
-export class Chart implements OnInit, AfterViewInit, OnDestroy {
+export class Chart implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
   @Input() cryptoData?: CryptoTicker;
 
   private chart!: IChartApi;
-  private candlestickSeries: any;
+  private candlestickSeries: { update: (data: CandlestickData) => void } | null = null;
   private currentCandle: CandlestickData | null = null;
   private candleInterval = 60000;
   private themeObserver?: MutationObserver;
 
   ngOnInit() {
-    console.log('Chart component initialized');
-    // Listen for theme changes
     this.themeObserver = new MutationObserver(() => {
       this.reinitializeChart();
     });
@@ -28,10 +37,13 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('AfterViewInit - initializing chart');
-    setTimeout(() => {
-      this.initChart();
-    }, 0);
+    afterNextRender(() => this.initChart());
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['cryptoData'] && this.candlestickSeries && this.cryptoData) {
+      this.updateChart(this.cryptoData);
+    }
   }
 
   ngOnDestroy() {
@@ -44,27 +56,16 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnChanges() {
-    if (this.candlestickSeries && this.cryptoData) {
-      this.updateChart(this.cryptoData);
-    }
-  }
-
   private reinitializeChart() {
     if (this.chart) {
       this.chart.remove();
-      this.chart = undefined as any;
+      this.chart = undefined as unknown as IChartApi;
     }
-    setTimeout(() => {
-      this.initChart();
-    }, 0);
+    setTimeout(() => this.initChart(), 0);
   }
 
   private initChart() {
-    console.log('Initializing chart, container:', this.chartContainer?.nativeElement);
-
     if (!this.chartContainer?.nativeElement) {
-      console.error('Chart container not found!');
       return;
     }
 
@@ -93,8 +94,6 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
       },
     });
 
-    console.log('Chart created:', this.chart);
-
     this.candlestickSeries = this.chart.addSeries(CandlestickSeries, {
       upColor: '#26a69a',
       downColor: '#ef5350',
@@ -102,8 +101,6 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
       wickUpColor: '#26a69a',
       wickDownColor: '#ef5350',
     });
-
-    console.log('Candlestick series added:', this.candlestickSeries);
 
     window.addEventListener('resize', this.handleResize);
   }
@@ -117,17 +114,14 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
   };
 
   private updateChart(data: CryptoTicker) {
-    console.log('Updating chart with data:', data);
-    
+    if (!this.candlestickSeries) return;
+
     const timestamp = Math.floor(data.eventTime.getTime() / this.candleInterval) * this.candleInterval;
     const time = (timestamp / 1000) as Time;
     const price = data.lastPrice;
 
-    console.log('Calculated time:', time, 'price:', price);
-
     if (!this.currentCandle || this.currentCandle.time !== time) {
       if (this.currentCandle) {
-        console.log('Updating previous candle:', this.currentCandle);
         this.candlestickSeries.update(this.currentCandle);
       }
       this.currentCandle = {
@@ -137,12 +131,10 @@ export class Chart implements OnInit, AfterViewInit, OnDestroy {
         low: price,
         close: price,
       };
-      console.log('Created new candle:', this.currentCandle);
     } else {
       this.currentCandle.high = Math.max(this.currentCandle.high, price);
       this.currentCandle.low = Math.min(this.currentCandle.low, price);
       this.currentCandle.close = price;
-      console.log('Updated current candle:', this.currentCandle);
     }
 
     this.candlestickSeries.update(this.currentCandle);
