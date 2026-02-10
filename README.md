@@ -1,59 +1,75 @@
-# ReactiveCryptoTerminal
+# Reactive Crypto Terminal
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.4.
+Real-time cryptocurrency market data powered by RxJS and Angular. View live prices, interactive candlestick charts, and search for your favorite pairs via Binance WebSocket.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Live prices** – WebSocket connection to Binance for real-time ticker data
+- **Candlestick chart** – Interactive price chart built with Lightweight Charts
+- **Search** – Look up pairs by ticker (BTC, ETH, SOL, etc.) or symbol name
+- **Quick select** – One-click chips for popular pairs
+- **Dark mode** – Toggle between light and dark themes
+- **Responsive** – Works on desktop and mobile
 
-```bash
-ng serve
-```
+## Tech Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Angular 20** – Standalone components, signals, `inject()`
+- **RxJS** – WebSocket streams, reactive patterns
+- **Angular Material** – UI components
+- **Lightweight Charts** – Candlestick charts
+- **TypeScript 5.8**
 
-## Code scaffolding
+## Getting Started
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Prerequisites
 
-```bash
-ng generate component component-name
-```
+- **Node.js 20+**
+- **npm**
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Install and run
 
 ```bash
-ng build
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open [http://localhost:4200](http://localhost:4200) in your browser.
 
-## Running unit tests
+## Scripts
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start development server |
+| `npm run build` | Production build (output in `dist/`) |
+| `npm run watch` | Build in watch mode |
+| `npm test` | Run unit tests (watch mode) |
+| `npm run test:ci` | Run tests once (for CI) |
 
-```bash
-ng test
+## Project Structure
+
+```
+src/app/
+├── features/
+│   ├── home/              # Landing page
+│   └── dashboard/         # Market data, chart, search bar
+│       ├── chart/
+│       ├── market/
+│       └── search-bar/
+├── shared/
+│   ├── layout/navbar/     # App shell, navigation
+│   ├── services/          # BinanceStream, ThemeService
+│   ├── pipes/             # cryptoPair
+│   ├── models/            # Types, ticker mappings
+│   └── testing/           # MockBinanceStream for tests
 ```
 
-## Running end-to-end tests
+Path aliases: `@shared/*`, `@features/*`
 
-For end-to-end (e2e) testing, run:
+## CI/CD
 
-```bash
-ng e2e
-```
+- **GitHub Actions** – Build and tests run on push/PR to `main`
+- **Husky** – Pre-commit hooks run Prettier and `npm run build`
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## License
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT
