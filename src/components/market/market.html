@@ -1,7 +1,7 @@
 @if (cryptoData(); as data) {
   <div class="market-container">
     <h2>{{ data.symbol | cryptoPair }} Live Price: {{ data.lastPrice || 'Loading...' }}</h2>
-    <chart [cryptoData]="data"></chart>
+    <app-chart [cryptoData]="data"></app-chart>
   </div>
 } @else {
   <div class="loading-spinner">

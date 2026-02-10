@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,20 +9,21 @@ import { BinanceStream } from '../../services/binance-stream';
 import { TICKER_MAPPINGS } from '../../models/ticker-mappings';
 
 @Component({
-  selector: 'search-bar',
-  imports: [FormsModule, CommonModule, MatInputModule, MatButtonModule, MatIconModule, MatFormFieldModule],
+  selector: 'app-search-bar',
+  imports: [ReactiveFormsModule, CommonModule, MatInputModule, MatButtonModule, MatIconModule, MatFormFieldModule],
   templateUrl: './search-bar.html',
   styleUrl: './search-bar.scss',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBar {
-  tickerInput: string = '';
-  errorMessage: string = '';
+  private binanceStream = inject(BinanceStream);
 
-  constructor(private binanceStream: BinanceStream) {}
+  tickerControl = new FormControl<string>('', { nonNullable: true });
+  errorMessage = '';
 
   onSearch() {
-    const input = this.tickerInput.trim().toLowerCase();
+    const input = this.tickerControl.value.trim().toLowerCase();
 
     if (!input) {
       this.errorMessage = 'Please enter a ticker symbol';
@@ -35,7 +36,7 @@ export class SearchBar {
       this.errorMessage = '';
       this.binanceStream.setTicker(normalizedTicker);
     } else {
-      this.errorMessage = `Ticker "${this.tickerInput}" not found. Try: BTC, ETH, SOL, etc.`;
+      this.errorMessage = `Ticker "${this.tickerControl.value}" not found. Try: BTC, ETH, SOL, etc.`;
     }
   }
 

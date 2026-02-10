@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BinanceStream } from '../../services/binance-stream';
 import { sampleTime } from 'rxjs';
@@ -8,11 +8,12 @@ import { Chart } from '../chart/chart';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'market',
+  selector: 'app-market',
   imports: [MatProgressSpinnerModule, CryptoPairPipe, Chart],
   templateUrl: './market.html',
   styleUrl: './market.scss',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Market {
   private binanceStream = inject(BinanceStream);

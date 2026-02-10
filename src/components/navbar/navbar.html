@@ -16,10 +16,10 @@
     </mat-nav-list>
     <div class="sidenav-footer">
       <mat-list-item>
-        <mat-icon matListItemIcon>{{ isDarkMode() ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        <mat-icon matListItemIcon>{{ themeService.isDarkMode() ? 'dark_mode' : 'light_mode' }}</mat-icon>
         <span matListItemTitle>Dark Mode</span>
         <mat-slide-toggle
-          [checked]="isDarkMode()"
+          [checked]="themeService.isDarkMode()"
           (change)="toggleTheme()"
           matListItemMeta>
         </mat-slide-toggle>

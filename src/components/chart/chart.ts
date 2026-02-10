@@ -1,6 +1,6 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnInit,
   OnDestroy,
   AfterViewInit,
   OnChanges,
@@ -8,18 +8,22 @@ import {
   ElementRef,
   ViewChild,
   Input,
+  inject,
   afterNextRender,
+  effect,
 } from '@angular/core';
 import { createChart, IChartApi, CandlestickData, Time, CandlestickSeries } from 'lightweight-charts';
 import { CryptoTicker } from '../../models/binance.model';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
-  selector: 'chart',
+  selector: 'app-chart',
   templateUrl: './chart.html',
   styleUrl: './chart.scss',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Chart implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class Chart implements OnChanges, AfterViewInit, OnDestroy {
   @ViewChild('chartContainer', { static: false }) chartContainer!: ElementRef;
   @Input() cryptoData?: CryptoTicker;
 
@@ -27,14 +31,14 @@ export class Chart implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   private candlestickSeries: { update: (data: CandlestickData) => void } | null = null;
   private currentCandle: CandlestickData | null = null;
   private candleInterval = 60000;
-  private themeObserver?: MutationObserver;
+  private themeService = inject(ThemeService);
 
-  ngOnInit() {
-    this.themeObserver = new MutationObserver(() => {
+  private themeEffect = effect(() => {
+    this.themeService.isDarkMode();
+    if (this.chart) {
       this.reinitializeChart();
-    });
-    this.themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-  }
+    }
+  });
 
   ngAfterViewInit() {
     afterNextRender(() => this.initChart());
@@ -51,9 +55,6 @@ export class Chart implements OnInit, OnChanges, AfterViewInit, OnDestroy {
       this.chart.remove();
     }
     window.removeEventListener('resize', this.handleResize);
-    if (this.themeObserver) {
-      this.themeObserver.disconnect();
-    }
   }
 
   private reinitializeChart() {

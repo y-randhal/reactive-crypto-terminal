@@ -3,8 +3,8 @@
     <mat-label>Search Cryptocurrency</mat-label>
     <input
       matInput
-      [(ngModel)]="tickerInput"
-      (keypress)="onKeyPress($event)"
+      [formControl]="tickerControl"
+      (keydown.enter)="onSearch()"
       placeholder="Enter ticker (e.g., BTC, Bitcoin, BTCUSDT, ETH, Ethereum)"
       autocomplete="off"
     />
@@ -12,8 +12,8 @@
     <button matSuffix mat-icon-button (click)="onSearch()">
       <mat-icon>arrow_forward</mat-icon>
     </button>
+    @if (errorMessage) {
+      <mat-error class="search-error">{{ errorMessage }}</mat-error>
+    }
   </mat-form-field>
-  @if (errorMessage) {
-    <mat-error class="search-error">{{ errorMessage }}</mat-error>
-  }
 </div>
